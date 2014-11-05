@@ -9,4 +9,4 @@ out, err = data.communicate()
 for line in out.split('\n'):
     if re.match(r"^0. BP.*", line):
         racks = re.match(r"0. BP.*\[.*(172\.2\.0\....):50010.*,.*(172\.2\.0\....):50010.*,.*(172\.2\.0\....):50010.*", line)
-        print(racks.group(1,2,3))
+        print(racks.group(1,2,3).sort())
