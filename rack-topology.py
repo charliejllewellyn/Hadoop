@@ -42,7 +42,7 @@ def getTopology():
 def getRack(host):
     data = readFile("/var/log/hadoop-hdfs/BDE-topology.json").read()
     topology = json.loads(data)
-    return topology.get(host)
+    return re.sub(r"^/", "", topology.get(host))
 
 hosts = sys.argv[1:]
 
