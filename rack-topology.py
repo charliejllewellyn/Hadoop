@@ -5,8 +5,10 @@ import urllib2
 import json
 import re
 
-def createFile(filename, data):
-    file = open(filename, "w")
+DEBUG=1
+
+def createFile(filename, data, append="w"):
+    file = open(filename, append)
     file.write(data)
     file.close()
 
@@ -35,20 +37,20 @@ def login():
 
 def getTopology():
     data = httpReq("GET", "https://10.0.0.100:8443/serengeti/api/cluster/cust3/rack").read()
-    createFile("BDE-topology.json", data)
+    createFile("/var/log/hadoop-hdfs/BDE-topology.json", data)
 
 def getRack(host):
-    data = readFile("BDE-topology.json").read()
+    data = readFile("/var/log/hadoop-hdfs/BDE-topology.json").read()
     topology = json.loads(data)
     return topology.get(host)
 
 hosts = sys.argv[1:]
 
+if DEBUG == 1:
+    file = createFile("/var/log/hadoop-hdfs/topology-bebug.log", "ran", "w+")
 try:
     getTopology()
 except Exception as e:
-    file = open("topology-errorlog.log", "w+")
-    file.write("error: " + e.read())
-    file.close()
+    file = createFile("/var/log/hadoop-hdfs/topology-error.log", "error: " + e.read(), "w+")
 for host in hosts:
     print("/cls1/rack_" + getRack(host))
