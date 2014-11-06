@@ -4,10 +4,14 @@ import sys
 import urllib2
 import json
 import re
+import os
+import datetime
 
 DEBUG=1
 
 def createFile(filename, data, append="w"):
+    if not os.path.exists(filename):
+        open(filename, 'w+').close()
     file = open(filename, append)
     file.write(data)
     file.close()
@@ -47,10 +51,10 @@ def getRack(host):
 hosts = sys.argv[1:]
 
 if DEBUG == 1:
-    file = createFile("/var/log/hadoop-hdfs/topology-bebug.log", "ran", "w+")
+    file = createFile("/var/log/hadoop-hdfs/topology-bebug.log", str(datetime.datetime.now()) + " - ran\n", "a")
 try:
     getTopology()
 except Exception as e:
-    file = createFile("/var/log/hadoop-hdfs/topology-error.log", "error: " + e.read(), "w+")
+    file = createFile("/var/log/hadoop-hdfs/topology-error.log", str(datetime.datetime.now()) + " - error: " + e.read() + "\n", "a")
 for host in hosts:
     print("/cls1/rack_" + getRack(host))
