@@ -33,19 +33,33 @@ function configureNamed {
         shortHadoopDataNet1=`echo $hadoopDataNet | awk -F. '{print $1"."$2}'`
         shortHadoopDataNet2=`echo $hadoopDataNet | awk -F. '{print $3}'`
         count=1
+        # Create named zonefiles
+        cat /var/named/named.empty > /var/named/data/client.hadoop.local
+        sed -i "s/rname.invalid/client.hadoop.local/g" /var/named/data/client.hadoop.local
+        sed -i "s/3H/86400/g" /var/named/data/client.hadoop.local
+        cat /var/named/named.empty > /var/named/data/data.hadoop.local
+        sed -i "s/rname.invalid/data.hadoop.local/g" /var/named/data/data.hadoop.local
+        sed -i "s/3H/86400/g" /var/named/data/data.hadoop.local
+        for num in {0..4}; do
+                zone=`echo $hadoopClientNet | awk -F. '{print $3+'$num'"."$2"."$1}'`
+                cat /var/named/named.empty > /var/named/data/$zone
+                sed -i "s/rname.invalid/ambari.client.hadoop.local/g" /var/named/data/$zone
+                sed "s=3H=86400\n\$ORIGIN $zone.IN-ADDR.ARPA.=g" /var/named/data/$zone
+        done
+        # Populate named zone files
         echo gateway    IN      A       $hadoopClientNet.254
         echo 254        IN      PTR     gateway.client.hadoop.local.
         echo ambari     IN      A       $hadoopClientNet.253
         echo 253        IN      PTR     ambari.client.hadoop.local.
         for ip in {1..254}; do
-                echo client$count    IN      A       $shortHadoopClientNet1.
-                echo $ip       IN      PTR     client$count.client.hadoop.local.
+                ##echo client$count    IN      A       $shortHadoopClientNet1.
+                ##echo $ip       IN      PTR     client$count.client.hadoop.local.
                 count=`echo $count+1 | bc`
         done
         for num in {0..4}; do
                 for ip in {2..254}; do
-                        echo datanode$count    IN      A       $shortHadoopDataNet1.`echo $shortHadoopDataNet2+$num | bc`.$ip
-                        echo $ip        IN      PTR     client$count.data.hadoop.local.
+                ##      echo datanode$count    IN      A       $shortHadoopDataNet1.`echo $shortHadoopDataNet2+$num | bc`.$ip
+                ##      echo $ip        IN      PTR     client$count.data.hadoop.local.
                         count=`echo $count+1 | bc`
                 done
         done
