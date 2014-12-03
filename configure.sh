@@ -73,7 +73,7 @@ function configureNamed {
                 done
         done
         chkconfig named on
-        service named start
+        service named restart
 }
 
 # Log initalisation
