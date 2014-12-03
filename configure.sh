@@ -72,6 +72,8 @@ function configureNamed {
                         count=`echo $count+1 | bc`
                 done
         done
+        chkconfig named on
+        service named start
 }
 
 # Log initalisation
