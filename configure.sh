@@ -84,5 +84,5 @@ if [[ ! $hadoopClientNet  =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-
 fi
 
 # Run the functions above to configure the server
-##configureFirewall
+configureFirewall
 configureNamed
